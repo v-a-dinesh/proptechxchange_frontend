@@ -1,17 +1,4 @@
-<<<<<<< HEAD
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
 # PropTechXchange – Real Estate Bidding Platform
 
 ## 1. Introduction
@@ -177,4 +164,4 @@ PropTechXchange is a real-time real estate bidding platform that enables buyers 
 ---
 
 This document serves as a complete reference for the development and implementation of PropTechXchange. 🚀
->>>>>>> 14512e5e284cdab7cc19582305c93b828bb5465f
+
