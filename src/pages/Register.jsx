@@ -82,10 +82,13 @@ const Register = () => {
 
   const handleSendOTP = async () => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/otp/send-otp`,
-        { email }
-      );
+     await axios.post(
+       `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/otp/send-otp`,
+       {
+         email,
+         displayName,
+       }
+     );
       setOTPSent(true);
       setError("OTP sent. Please check your email.");
     } catch (error) {
