@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { registerWithEmail, loginWithGoogle } from "../firebaseConfig";
 import { useNavigate, Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
-
+import axios from "axios";
+import { registerWithEmail, loginWithGoogle } from "../firebaseConfig"; 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,6 +11,8 @@ const Register = () => {
   const [displayName, setDisplayName] = useState("");
   const [role, setRole] = useState("buyer"); // Default role
   const [loading, setLoading] = useState(false);
+  const [otp, setOTP] = useState("");
+  const [otpSent, setOTPSent] = useState(false);
   const navigate = useNavigate();
   const { setError } = useAuth();
 
@@ -48,8 +50,26 @@ const Register = () => {
       }
     }
 
+    if (!otpSent) {
+      setError("Please send OTP first");
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Register with email and include role
+      // Verify OTP with backend
+      const verifyResponse = await axios.post(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/otp/verify-otp`,
+        { email, otp }
+      );
+
+      if (verifyResponse.status !== 200) {
+        setError("Invalid OTP");
+        setLoading(false);
+        return;
+      }
+
+      // If OTP is valid, proceed with Firebase registration
       await registerWithEmail(email, password, displayName, role);
 
       // Navigate to role-specific dashboard
@@ -57,6 +77,20 @@ const Register = () => {
     } catch (error) {
       setError(handleAuthError(error));
       setLoading(false);
+    }
+  };
+
+  const handleSendOTP = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/otp/send-otp`,
+        { email }
+      );
+      setOTPSent(true);
+      setError("OTP sent. Please check your email.");
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      setError("Failed to send OTP. Please try again.");
     }
   };
 
@@ -79,7 +113,8 @@ const Register = () => {
   // Error handling utility
   const handleAuthError = (error) => {
     const errorCodes = {
-      "auth/email-already-in-use": "Email already registered.",
+      "auth/email-already-in-use":
+        "Registration Successful,Please Login to Continue",
       "auth/invalid-email": "Invalid email address.",
       "auth/weak-password": "Password is too weak.",
     };
@@ -97,7 +132,6 @@ const Register = () => {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Create Your PropTech Exchange Account
         </h2>
-
         <div className="mt-8 bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleRegister}>
             {/* Role Selection */}
@@ -194,18 +228,49 @@ const Register = () => {
               />
             </div>
 
+            {/* OTP Section */}
+            <div>
+              {!otpSent ? (
+                <button
+                  type="button"
+                  onClick={handleSendOTP}
+                  disabled={loading}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                >
+                  {loading ? "Sending OTP..." : "Send OTP"}
+                </button>
+              ) : (
+                <>
+                  <label
+                    htmlFor="otp"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Enter OTP
+                  </label>
+                  <input
+                    id="otp"
+                    type="text"
+                    required
+                    value={otp}
+                    onChange={(e) => setOTP(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                    placeholder="Enter the OTP you received"
+                  />
+                </>
+              )}
+            </div>
+
             {/* Submit Button */}
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !otpSent}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
                 {loading ? "Registering..." : "Create Account"}
               </button>
             </div>
           </form>
-
           {/* Google Registration */}
           <div className="mt-6">
             <div className="relative">
