@@ -3,6 +3,8 @@ import {
   loginWithEmail,
   loginWithGoogle,
   resetPassword,
+  getUserRole,
+  auth // Import this function
 } from "../firebaseConfig";
 import { useNavigate, Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
@@ -20,9 +22,16 @@ const Login = () => {
     setLoading(true);
     setError(null);
 
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      setLoading(false);
+      return;
+    }
+
     try {
       await loginWithEmail(email, password);
-      navigate("/dashboard");
+      const role = await getUserRole(auth.currentUser.uid); // Fetch the role
+      navigateToDashboard(role);
     } catch (error) {
       setError(handleAuthError(error));
       setLoading(false);
@@ -35,10 +44,27 @@ const Login = () => {
 
     try {
       await loginWithGoogle();
-      navigate("/dashboard");
+      const role = await getUserRole(auth.currentUser.uid); // Fetch the role
+      navigateToDashboard(role);
     } catch (error) {
       setError(handleAuthError(error));
       setLoading(false);
+    }
+  };
+
+  const navigateToDashboard = (role) => {
+    switch (role) {
+      case "admin":
+        navigate("/admin/dashboard");
+        break;
+      case "seller":
+        navigate("/seller/dashboard");
+        break;
+      case "buyer":
+        navigate("/buyer/dashboard");
+        break;
+      default:
+        navigate("/dashboard");
     }
   };
 
@@ -56,7 +82,6 @@ const Login = () => {
     }
   };
 
-  // Error handling utility
   const handleAuthError = (error) => {
     const errorCodes = {
       "auth/invalid-email": "Invalid email address.",
@@ -95,7 +120,7 @@ const Login = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
               />
             </div>
 
@@ -112,7 +137,7 @@ const Login = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
               />
             </div>
 
@@ -132,7 +157,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
                 {loading ? "Signing In..." : "Sign In"}
               </button>
