@@ -17,13 +17,16 @@ import {
   updateDoc
 } from 'firebase/firestore';
 
+// Firebase configuration
+// Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAcslN11DR5BhSQDAbJELvaKwN7_1fr3BY",
-  authDomain: "proptechxchange-f8a94.firebaseapp.com",
-  projectId: "proptechxchange-f8a94",
-  storageBucket: "proptechxchange-f8a94.firebasestorage.app",
-  messagingSenderId: "638439193013",
-  appId: "1:638439193013:web:1ca8c3a20c58de4d7ec1fc"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
@@ -32,7 +35,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 
-// User Document Creation
+// Create or update user document in Firestore
 export const createUserDocument = async (user, additionalData = {}) => {
   if (!user) return null;
 
@@ -57,7 +60,7 @@ export const createUserDocument = async (user, additionalData = {}) => {
   }
 };
 
-// Get User Document
+// Retrieve user document from Firestore
 export const getUserDocument = async (uid) => {
   try {
     const userRef = doc(db, 'users', uid);
@@ -70,17 +73,13 @@ export const getUserDocument = async (uid) => {
   }
 };
 
-// Authentication Methods with Role Support
+// Register user with email and password
 export const registerWithEmail = async (email, password, displayName, role = 'buyer') => {
   try {
-    // Create user with Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Update profile
     await updateProfile(user, { displayName });
-    
-    // Create user document in Firestore
     await createUserDocument(user, { displayName, role });
     
     return userCredential;
@@ -90,11 +89,11 @@ export const registerWithEmail = async (email, password, displayName, role = 'bu
   }
 };
 
+// Login user with email and password
 export const loginWithEmail = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     
-    // Update last login
     const userDoc = await getUserDocument(userCredential.user.uid);
     if (userDoc) {
       const userRef = doc(db, 'users', userCredential.user.uid);
@@ -108,12 +107,12 @@ export const loginWithEmail = async (email, password) => {
   }
 };
 
+// Login user with Google
 export const loginWithGoogle = async (role = 'buyer') => {
   try {
     const userCredential = await signInWithPopup(auth, googleProvider);
     const user = userCredential.user;
     
-    // Create or update user document
     await createUserDocument(user, { role });
     
     return userCredential;
@@ -123,13 +122,15 @@ export const loginWithGoogle = async (role = 'buyer') => {
   }
 };
 
+// Logout user
 export const logoutUser = () => signOut(auth);
 
+// Send password reset email
 export const resetPassword = (email) => {
   return sendPasswordResetEmail(auth, email);
 };
 
-// Get User Role
+// Get user role
 export const getUserRole = async (uid) => {
   try {
     const userDoc = await getUserDocument(uid);
@@ -140,7 +141,7 @@ export const getUserRole = async (uid) => {
   }
 };
 
-// Update User Profile
+// Update user profile
 export const updateUserProfile = async (uid, updateData) => {
   try {
     const userRef = doc(db, 'users', uid);
