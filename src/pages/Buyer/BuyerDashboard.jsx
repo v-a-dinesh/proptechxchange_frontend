@@ -8,8 +8,8 @@ import {
   FaSearch,
   FaPlus,
 } from "react-icons/fa";
-import { useAuth } from "../context/AuthContext";
-import { logoutUser } from "../firebaseConfig";
+import { useAuth } from "../../context/AuthContext";
+import { logoutUser } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {

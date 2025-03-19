@@ -11,8 +11,8 @@ import {
   FaTrash,
   FaLock,
 } from "react-icons/fa";
-import { useAuth } from "../context/AuthContext";
-import { logoutUser } from "../firebaseConfig";
+import { useAuth } from "../../context/AuthContext";
+import { logoutUser } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

@@ -1,9 +1,9 @@
 import React from "react";
-import NavigationBar from "./LandingPage/NavigationBar";
-import HeroSection from "./LandingPage/HeroSection";
-import FeaturesSection from "./LandingPage/FeaturesSection";
-import TestimonialsSection from "./LandingPage/TestimonialsSection";
-import Footer from "./LandingPage/Footer";
+import NavigationBar from "./NavigationBar";
+import HeroSection from "./HeroSection";
+import FeaturesSection from "./FeaturesSection";
+import TestimonialsSection from "./TestimonialsSection";
+import Footer from "./Footer";
 
 const LandingPage = () => {
   return (
