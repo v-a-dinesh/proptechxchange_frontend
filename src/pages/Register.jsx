@@ -3,7 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import { registerWithEmail, loginWithGoogle } from "../firebaseConfig"; 
+import { registerWithEmail, loginWithGoogle } from "../firebaseConfig";
+
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +15,7 @@ const Register = () => {
   const [otp, setOTP] = useState("");
   const [otpSent, setOTPSent] = useState(false);
   const navigate = useNavigate();
-  const { setError } = useAuth();
+  const { setError, setUser } = useAuth();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -39,6 +40,10 @@ const Register = () => {
         condition: !email.includes("@"),
         message: "Please enter a valid email address",
       },
+      {
+        condition: !otpSent,
+        message: "Please send OTP first",
+      },
     ];
 
     // Check validations
@@ -48,12 +53,6 @@ const Register = () => {
         setLoading(false);
         return;
       }
-    }
-
-    if (!otpSent) {
-      setError("Please send OTP first");
-      setLoading(false);
-      return;
     }
 
     try {
@@ -70,7 +69,20 @@ const Register = () => {
       }
 
       // If OTP is valid, proceed with Firebase registration
-      await registerWithEmail(email, password, displayName, role);
+      const userCredential = await registerWithEmail(
+        email,
+        password,
+        displayName,
+        role
+      );
+
+      // Update user in AuthContext
+      setUser({
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        displayName: userCredential.user.displayName,
+        role: role,
+      });
 
       // Navigate to role-specific dashboard
       navigate(`/${role}/dashboard`);
@@ -82,13 +94,13 @@ const Register = () => {
 
   const handleSendOTP = async () => {
     try {
-     await axios.post(
-       `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/otp/send-otp`,
-       {
-         email,
-         displayName,
-       }
-     );
+      await axios.post(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/otp/send-otp`,
+        {
+          email,
+          displayName,
+        }
+      );
       setOTPSent(true);
       setError("OTP sent. Please check your email.");
     } catch (error) {
@@ -103,7 +115,15 @@ const Register = () => {
 
     try {
       // Register with Google and include role
-      await loginWithGoogle(role);
+      const userCredential = await loginWithGoogle(role);
+
+      // Update user in AuthContext
+      setUser({
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        displayName: userCredential.user.displayName,
+        role: role,
+      });
 
       // Navigate to role-specific dashboard
       navigate(`/${role}/dashboard`);
@@ -117,9 +137,10 @@ const Register = () => {
   const handleAuthError = (error) => {
     const errorCodes = {
       "auth/email-already-in-use":
-        "Registration Successful,Please Login to Continue",
+        "Email already in use. Please use a different email or log in.",
       "auth/invalid-email": "Invalid email address.",
-      "auth/weak-password": "Password is too weak.",
+      "auth/weak-password":
+        "Password is too weak. It should be at least 6 characters long.",
     };
 
     return (
@@ -274,6 +295,7 @@ const Register = () => {
               </button>
             </div>
           </form>
+
           {/* Google Registration */}
           <div className="mt-6">
             <div className="relative">

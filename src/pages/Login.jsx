@@ -4,7 +4,7 @@ import {
   loginWithGoogle,
   resetPassword,
   getUserRole,
-  auth // Import this function
+  auth,
 } from "../firebaseConfig";
 import { useNavigate, Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
@@ -29,8 +29,11 @@ const Login = () => {
     }
 
     try {
-      await loginWithEmail(email, password);
-      const role = await getUserRole(auth.currentUser.uid); // Fetch the role
+      const userCredential = await loginWithEmail(email, password);
+      const token = await userCredential.user.getIdToken();
+      localStorage.setItem("authToken", token); // Store the token in localStorage
+
+      const role = await getUserRole(auth.currentUser.uid);
       navigateToDashboard(role);
     } catch (error) {
       setError(handleAuthError(error));
@@ -43,8 +46,11 @@ const Login = () => {
     setError(null);
 
     try {
-      await loginWithGoogle();
-      const role = await getUserRole(auth.currentUser.uid); // Fetch the role
+      const userCredential = await loginWithGoogle();
+      const token = await userCredential.user.getIdToken();
+      localStorage.setItem("authToken", token); // Store the token in localStorage
+
+      const role = await getUserRole(auth.currentUser.uid);
       navigateToDashboard(role);
     } catch (error) {
       setError(handleAuthError(error));
