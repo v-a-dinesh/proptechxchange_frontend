@@ -1,3 +1,5 @@
+// AuctionHistory.js
+
 import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import AuctionHistoryItem from "../../components/seller/AuctionHistoryItem";
@@ -32,11 +34,25 @@ const AuctionHistory = () => {
   }, [user.uid]);
 
   if (isLoading) {
-    return <div>Loading auction history...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return (
+      <div className="max-w-3xl mx-auto p-4">
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      </div>
+    );
   }
 
   // Sort auctions by end time in descending order
@@ -45,12 +61,12 @@ const AuctionHistory = () => {
   );
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Auction History</h1>
+    <div className="max-w-5xl mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6 text-center">Auction History</h1>
       {sortedAuctions.length === 0 ? (
-        <p>No auctions found.</p>
+        <p className="text-center text-gray-600">No auctions found.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="space-y-4">
           {sortedAuctions.map((auction) => (
             <AuctionHistoryItem key={auction._id} auction={auction} />
           ))}

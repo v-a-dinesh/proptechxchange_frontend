@@ -3,88 +3,120 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import {
+  HomeIcon,
+  BuildingOffice2Icon,
+  ClockIcon,
+  DocumentChartBarIcon,
+  UserCircleIcon,
+  ArrowRightOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 
 const Sidebar = ({ user }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
 
+  const menuItems = [
+    {
+      path: "/seller/dashboard",
+      label: "Home",
+      icon: HomeIcon,
+    },
+    {
+      path: "/seller/dashboard/properties",
+      label: "My Properties",
+      icon: BuildingOffice2Icon,
+    },
+    {
+      path: "/seller/dashboard/auctions",
+      label: "My Auctions",
+      icon: ClockIcon,
+    },
+    {
+      path: "/seller/dashboard/auction-history",
+      label: "Auction History",
+      icon: DocumentChartBarIcon,
+    },
+    {
+      path: "/seller/dashboard/profile",
+      label: "Profile",
+      icon: UserCircleIcon,
+    },
+  ];
+
   const isActive = (path) => {
-    return location.pathname === path ? "bg-gray-200" : "";
+    return location.pathname === path
+      ? "bg-blue-50 text-blue-600 border-r-4 border-blue-600"
+      : "text-gray-600 hover:bg-gray-100";
   };
 
   const handleLogout = async () => {
     try {
       await logout();
-      navigate("/login"); // Redirect to login page after logout
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      // You might want to show an error message to the user here
     }
   };
 
   return (
-    <div className="w-64 bg-gray-100 h-screen fixed top-0 left-0 overflow-y-auto">
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">Seller Dashboard</h2>
-        <div className="mb-4">
-          <p className="text-sm font-medium text-gray-600">
-            Welcome, {user.displayName}
-          </p>
-          <p className="text-sm text-gray-500">{user.email}</p>
+    <div className="w-64 bg-white shadow-xl h-screen fixed top-0 left-0 overflow-y-auto border-r">
+      <div className="p-6">
+        <div className="flex items-center mb-8">
+          <div className="h-10 w-10 mr-3 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+            PT
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800">Seller Portal</h2>
         </div>
+
+        <div className="mb-6 bg-gray-100 rounded-lg p-4 shadow-sm">
+          <div className="flex items-center">
+            <div className="w-12 h-12 rounded-full mr-4 bg-blue-200 flex items-center justify-center text-blue-800 font-bold">
+              {user.displayName ? user.displayName[0].toUpperCase() : "U"}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-800">
+                {user.displayName || "User"}
+              </p>
+              <p className="text-xs text-gray-500 truncate max-w-[150px]">
+                {user.email}
+              </p>
+            </div>
+          </div>
+        </div>
+
         <nav>
-          <ul>
-            <li className={`mb-2 ${isActive("/seller/dashboard")}`}>
-              <Link
-                to="/seller/dashboard"
-                className="block p-2 rounded hover:bg-gray-200"
-              >
-                Home
-              </Link>
-            </li>
-            <li className={`mb-2 ${isActive("/seller/dashboard/properties")}`}>
-              <Link
-                to="/seller/dashboard/properties"
-                className="block p-2 rounded hover:bg-gray-200"
-              >
-                My Properties
-              </Link>
-            </li>
-            <li className={`mb-2 ${isActive("/seller/dashboard/auctions")}`}>
-              <Link
-                to="/seller/dashboard/auctions"
-                className="block p-2 rounded hover:bg-gray-200"
-              >
-                My Auctions
-              </Link>
-            </li>
-            <li
-              className={`mb-2 ${isActive(
-                "/seller/dashboard/auction-history"
-              )}`}
-            >
-              <Link
-                to="/seller/dashboard/auction-history"
-                className="block p-2 rounded hover:bg-gray-200"
-              >
-                Auction History
-              </Link>
-            </li>
-            <li className={`mb-2 ${isActive("/seller/dashboard/profile")}`}>
-              <Link
-                to="/seller/dashboard/profile"
-                className="block p-2 rounded hover:bg-gray-200"
-              >
-                Profile
-              </Link>
-            </li>
-            <li className="mb-2">
+          <ul className="space-y-2">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={`
+                      flex items-center p-3 rounded-lg transition-all duration-200 
+                      ${isActive(item.path)}
+                    `}
+                  >
+                    <Icon className="w-5 h-5 mr-3 text-current" />
+                    <span className="text-sm font-medium">{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
+
+            <li className="pt-4 mt-4 border-t">
               <button
                 onClick={handleLogout}
-                className="w-full text-left p-2 rounded hover:bg-gray-200"
+                className="
+                  w-full flex items-center p-3 rounded-lg 
+                  text-red-600 hover:bg-red-50 
+                  transition-all duration-200
+                "
               >
-                Logout
+                <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3 text-current" />
+                <span className="text-sm font-medium">Logout</span>
               </button>
             </li>
           </ul>

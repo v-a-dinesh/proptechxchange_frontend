@@ -1,8 +1,10 @@
+// MyAuctions.jsx
+
 import React, { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import AuctionCard from "../../components/seller/AuctionCard";
 import StartAuctionForm from "../../components/seller/StartAuctionForm";
-import { getSellerAuctions, startAuction, closeAuction } from "../../utils/api";
+import { getSellerAuctions, startAuction } from "../../utils/api";
 
 const MyAuctions = () => {
   const { user, properties } = useOutletContext();
@@ -40,17 +42,6 @@ const MyAuctions = () => {
     } catch (error) {
       setError("Error starting auction. Please try again.");
       console.error("Error starting auction:", error.message);
-    }
-  };
-
-  const handleCloseAuction = async (auctionId) => {
-    try {
-      await closeAuction(auctionId);
-      const updatedAuctions = await getSellerAuctions(user.uid);
-      setAuctions(updatedAuctions.auctions);
-    } catch (error) {
-      setError("Error closing auction. Please try again.");
-      console.error("Error closing auction:", error.message);
     }
   };
 
@@ -96,11 +87,7 @@ const MyAuctions = () => {
               ["upcoming", "active", "extended"].includes(auction.status)
             )
             .map((auction) => (
-              <AuctionCard
-                key={auction._id}
-                auction={auction}
-                onClose={handleCloseAuction}
-              />
+              <AuctionCard key={auction._id} auction={auction} />
             ))}
         </div>
       )}

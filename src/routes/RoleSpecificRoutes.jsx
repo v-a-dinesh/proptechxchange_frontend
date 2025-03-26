@@ -13,6 +13,9 @@ const MyAuctions = lazy(() => import("../pages/Seller/MyAuctions"));
 const AuctionHistory = lazy(() => import("../pages/Seller/AuctionHistory"));
 const Profile = lazy(() => import("../pages/Seller/Profile"));
 import PropertyDetails from "../components/seller/PropertyDetails";
+const AuctionDetails = lazy(() =>
+  import("../components/seller/AuctionDetails")
+);
 
 const RoleSpecificRoutes = () => [
   <Route
@@ -42,6 +45,7 @@ const RoleSpecificRoutes = () => [
     <Route path="auctions" element={<MyAuctions />} />
     <Route path="auction-history" element={<AuctionHistory />} />
     <Route path="profile" element={<Profile />} />
+    <Route path="auctions/:auctionId" element={<AuctionDetails />} />
   </Route>,
   <Route
     key="buyer-dashboard"
