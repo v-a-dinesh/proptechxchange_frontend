@@ -1,3 +1,5 @@
+//src\context\AuthProvider.jsx
+
 import React, { useState, useEffect, useMemo } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, getUserDocument, logoutUser } from "../firebaseConfig";

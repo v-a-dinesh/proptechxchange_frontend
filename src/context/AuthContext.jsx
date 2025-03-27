@@ -1,3 +1,5 @@
+//src\context\AuthContext.jsx
+
 import React, { createContext, useContext } from "react";
 
 // Create the context with default values

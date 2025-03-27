@@ -7,7 +7,6 @@ import PrivateRoute from "../components/PrivateRoute";
 
 const AdminDashboard = lazy(() => import("../pages/Admin/AdminDashboard"));
 const SellerDashboard = lazy(() => import("../pages/Seller/SellerDashboard"));
-const BuyerDashboard = lazy(() => import("../pages/Buyer/BuyerDashboard"));
 const MyProperties = lazy(() => import("../pages/Seller/MyProperties"));
 const MyAuctions = lazy(() => import("../pages/Seller/MyAuctions"));
 const AuctionHistory = lazy(() => import("../pages/Seller/AuctionHistory"));
@@ -15,6 +14,16 @@ const Profile = lazy(() => import("../pages/Seller/Profile"));
 import PropertyDetails from "../components/seller/PropertyDetails";
 const AuctionDetails = lazy(() =>
   import("../components/seller/AuctionDetails")
+);
+
+const BuyerDashboard = lazy(() => import("../pages/Buyer/BuyerDashboard"));
+const Home = lazy(() => import("../pages/Buyer/Home"));
+const BuyerMyAuctions = lazy(() => import("../pages/Buyer/MyAuctions"));
+const BidHistory = lazy(() => import("../pages/Buyer/BidHistory"));
+const BuyerProfile = lazy(() => import("../pages/Buyer/Profile"));
+const BuyerAuctionDetails = lazy(() => import("../pages/Buyer/AuctionDetails"));
+const BuyerPropertyDetails = lazy(() =>
+  import("../pages/Buyer/PropertyDetails")
 );
 
 const RoleSpecificRoutes = () => [
@@ -55,7 +64,15 @@ const RoleSpecificRoutes = () => [
         <BuyerDashboard />
       </PrivateRoute>
     }
-  />,
+  >
+    <Route index element={<Home />} />
+    <Route path="home" element={<Home />} />
+    <Route path="my-auctions" element={<BuyerMyAuctions />} />
+    <Route path="bid-history" element={<BidHistory />} />
+    <Route path="profile" element={<BuyerProfile />} />
+    <Route path="auctions/:auctionId" element={<BuyerAuctionDetails />} />
+    <Route path="properties/:propertyId" element={<BuyerPropertyDetails />} />
+  </Route>,
 ];
 
 export default RoleSpecificRoutes;

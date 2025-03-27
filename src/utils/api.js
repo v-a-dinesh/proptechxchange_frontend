@@ -2,7 +2,7 @@
 const BASE_URL = 'http://localhost:5000/api';
 
 // Function to handle API errors
-const handleResponse = (response) => {
+export const handleResponse = (response) => {
   if (!response.ok) {
     return response.json().then((error) => {
       throw new Error(`${error.message || 'API request failed'} with status ${response.status}`);
@@ -12,12 +12,12 @@ const handleResponse = (response) => {
 };
 
 // Function to get the authentication token from localStorage
-const getAuthToken = () => {
+export const getAuthToken = () => {
   return localStorage.getItem('authToken');
 };
 
 // Function to create headers based on the request type
-const createHeaders = (isFormData) => {
+export const createHeaders = (isFormData) => {
   const headers = new Headers();
   const token = getAuthToken();
   
